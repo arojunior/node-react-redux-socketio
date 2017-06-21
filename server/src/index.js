@@ -26,16 +26,17 @@ const {fireAlarm} = require('./modules/Alarms/actions')
 
 io.on('connection', socket => {
   const newId = userId(store.getState().Users.count)
+
   store.dispatch(userConnected(newId))
 
   socket.on('alarm:fire', id => {
     store.dispatch(fireAlarm(id))
-    socket.emit('alarm:firing', id)
+    socket.broadcast.emit('alarm:list_response', store.getState().Alarms)
   })
 
-  socket.on('alarm:list', () => {
+  socket.on('alarm:list', () =>
     socket.emit('alarm:list_response', store.getState().Alarms)
-  })
+  )
 })
 
 console.log(`server started at ${port}`)
