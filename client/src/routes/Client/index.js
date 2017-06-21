@@ -7,7 +7,7 @@ import {setAlarms} from '../../modules/Alarms/actions'
 import AlertsComponent from './components/AlertsComponent'
 
 const Client = ({alarms, dispatch, AlertsComponent}) => {
-  const alarmAlert = alarms ? AlertsComponent(alarms) : null
+  const alarmAlert = alarms && AlertsComponent(alarms)
 
   Socket.on('alarm:list_response', alarms => {
     dispatch(setAlarms(alarms))
@@ -16,7 +16,7 @@ const Client = ({alarms, dispatch, AlertsComponent}) => {
   return (
     <div className="container">
       <div className="col-md-4 col-md-offset-4">
-        {alarmAlert}
+        {alarmAlert.length > 0 ? alarmAlert : `IT'S OK`}
       </div>
     </div>
   )

@@ -3,7 +3,7 @@ import {handleAction} from 'redux-actions'
 import {ALARM} from './actions'
 
 const initialState = {
-  data: null
+  data: []
 }
 
 export default handleAction(
