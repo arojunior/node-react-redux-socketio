@@ -31,7 +31,7 @@ io.on('connection', socket => {
 
   socket.on('alarm:fire', id => {
     store.dispatch(fireAlarm(id))
-    socket.broadcast.emit('alarm:list_response', store.getState().Alarms)
+    io.emit('alarm:list_response', store.getState().Alarms)
   })
 
   socket.on('alarm:list', () =>

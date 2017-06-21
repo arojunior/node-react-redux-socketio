@@ -1,42 +1,31 @@
-import React, {Component} from 'react'
+import React from 'react'
 import {connect} from 'react-redux'
+import {compose, lifecycle, withProps} from 'recompose'
 
 import Socket from '../../modules/socket'
-import {fireAlarm, setAlarms} from '../../modules/Alarms/actions'
+import {setAlarms} from '../../modules/Alarms/actions'
+import ButtonsComponent from './components/ButtonsComponent'
 
-class Manager extends Component {
-  constructor(props) {
-    super(props)
+const Manager = ({alarms, ButtonsComponent, dispatch}) => {
+  const buttons = alarms && ButtonsComponent(alarms)
 
-    Socket.on('alarm:list_response', alarms => {
-      this.props.dispatch(setAlarms(alarms))
-    })
-  }
+  Socket.on('alarm:list_response', alarms => {
+    dispatch(setAlarms(alarms))
+  })
 
-  componentDidMount() {
-    Socket.emit('alarm:list')
-  }
-
-  render() {
-    const {alarms} = this.props
-    const buttons = alarms
-      ? alarms.map(alarm =>
-          <a
-            key={alarm.id}
-            href="#"
-            className="btn btn-default"
-            onClick={() => fireAlarm(alarm.id)}>
-            {alarm.name}
-          </a>
-        )
-      : null
-
-    return <div>{buttons}</div>
-  }
+  return <div>{buttons}</div>
 }
 
-const mapStateToProps = state => ({
-  alarms: state.Alarms.data
-})
-
-export default connect(mapStateToProps)(Manager)
+export default compose(
+  connect(state => ({
+    alarms: state.Alarms.data
+  })),
+  withProps({
+    ButtonsComponent
+  }),
+  lifecycle({
+    componentDidMount() {
+      Socket.emit('alarm:list')
+    }
+  })
+)(Manager)
